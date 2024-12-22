@@ -67,6 +67,11 @@ use crate::str::{self, Chars, Utf8Error, from_utf8_unchecked_mut};
 use crate::str::{FromStr, from_boxed_utf8_unchecked};
 use crate::vec::Vec;
 
+// use core::ub_checks::Invariant;
+
+#[cfg(kani)]
+use core::kani;
+
 /// A UTF-8–encoded, growable string.
 ///
 /// `String` is the most common string type. It has ownership over the contents
@@ -3215,5 +3220,45 @@ impl From<char> for String {
     #[inline]
     fn from(c: char) -> Self {
         c.to_string()
+    }
+}
+
+
+
+    #[kani::proof]
+    #[kani::unwind(9)]
+    fn check_remove() {
+        // array size is chosen because it is small enough to be feasible to check exhaustively
+        const ARRAY_SIZE: usize = 8;
+        // Use kani::any_array to generate arbitrary byte arrays of length up to ARRAY_SIZE
+        // This is better than the previous generation method with for loop..
+        let arr: [u8; ARRAY_SIZE] = kani::Arbitrary::any_array();
+        for &byte in &arr {
+            kani::assume(byte.is_ascii()); // Constrain to ASCII characters
+        }
+
+        // Convert byte array to a String directly (safe since all are ASCII)
+        let mut s = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
+
+        // Ensure the string is not empty
+        kani::assume(!s.is_empty());
+
+        // Generate a valid index within the bounds of the string
+        let idx: usize = kani::any_where(|&x| x < s.len());
+
+        // Store the character at the index `idx` before calling `remove`
+        let original_char = s.chars().nth(idx).expect("Index out of bounds");
+
+        // Call the `remove` function
+        let removed_char = s.remove(idx);
+
+        // Verify the string length decreases correctly
+        assert_eq!(s.len(), arr.len() - 1);
+
+        // Verify the removed character is a valid ASCII character
+        assert!(removed_char.is_ascii());
+
+        // Verify that the removed character matches the original character at `idx`
+        assert_eq!(removed_char, original_char);
     }
 }
