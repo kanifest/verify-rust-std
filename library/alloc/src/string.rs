@@ -3224,6 +3224,69 @@ impl From<char> for String {
 }
 
 
+#[cfg(kani)]
+#[unstable(feature = "kani", issue = "none")]
+mod verify {
+    use super::*;
+    use kani::Arbitrary;
+
+    impl Arbitrary for String {
+        fn any() -> Self {
+            const MAX_LENGTH: usize = 8;
+    
+            // Generate a random length for the vector, up to MAX_LENGTH
+            let length: usize = kani::any();
+            kani::assume(length <= MAX_LENGTH);
+    
+            // Generate a vector of bytes of the given length
+            let mut bytes = Vec::with_capacity(length);
+            for _ in 0..length {
+                let byte: u8 = kani::any();
+                kani::assume(byte.is_ascii());
+                bytes.push(byte);
+            }
+    
+            // Convert bytes to a UTF-8 string; fallback to an empty string if invalid
+            String::from_utf8(bytes).unwrap_or_default()
+        }
+    }
+    
+
+    #[kani::proof]
+    #[kani::unwind(8)]
+    fn check_remove_matches() {
+        const MAX_SIZE: usize = 8;
+        // const MAX_PATTERN_SIZE: usize = 1;
+
+        // Use kani::any to generate arbitrary strings of length up to MAX_SIZE
+        let mut input: String = kani::any();
+
+        // Generate an arbitrary pattern (single character for simplicity)
+        // TODO: use string patterns of size up to MAX_PATTERN_SIZE
+        let pattern: char = kani::any();
+        kani::assume(pattern.is_ascii());
+
+        // Preserve original input for validation
+        let original_input = input.clone();
+        
+        // Remove matches of the pattern
+        input.retain(|c| c != pattern);
+
+        // Check that all occurrences of the pattern are removed
+        for c in input.chars() {
+            assert!(c != pattern, "Pattern not fully removed.");
+        }
+
+        // Ensure the length of the result is correct
+        let expected_len = original_input.chars().filter(|&c| c != pattern).count();
+        assert_eq!(input.len(), expected_len, "Unexpected length of the result.");
+
+        // Check the safety invariant of the resulting string
+        // assert!(input.is_safe(), "Resulting string does not satisfy the safety invariant.");
+
+        assert_eq!(input, original_input.replace(pattern, ""), "Unexpected result.");
+    }
+
 
     #[kani::proof]
     #[kani::unwind(9)]
