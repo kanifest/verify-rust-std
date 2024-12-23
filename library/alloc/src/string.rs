@@ -67,11 +67,11 @@ use crate::str::{self, Chars, Utf8Error, from_utf8_unchecked_mut};
 use crate::str::{FromStr, from_boxed_utf8_unchecked};
 use crate::vec::Vec;
 
-// use core::ub_checks::Invariant;
+use core::ub_checks::Invariant;
 
 #[cfg(kani)]
 use core::kani;
-
+use safety::{requires, ensures};
 /// A UTF-8–encoded, growable string.
 ///
 /// `String` is the most common string type. It has ownership over the contents
@@ -426,38 +426,38 @@ pub struct FromUtf8Error {
 #[derive(Debug)]
 pub struct FromUtf16Error(());
 
-// #[unstable(feature = "ub_checks", issue = "none")]
-// impl Invariant for String {
-//     /**
-//      * Safety invariant of a valid String:
-//      * 
-//      * 1. The string should contain only valid UTF-8 sequences, as guaranteed by Rust.
-//      * 2. The string should not contain embedded null bytes (`'\0'`), as these can cause issues in certain FFI contexts.
-//      * 3. The string's length should be consistent with the internal buffer, ensuring no buffer overflows or underflows.
-//      */
-//     fn is_safe(&self) -> bool {
-//         let bytes = self.as_bytes();
+#[unstable(feature = "ub_checks", issue = "none")]
+impl Invariant for String {
+    /**
+     * Safety invariant of a valid String:
+     * 
+     * 1. The string should contain only valid UTF-8 sequences, as guaranteed by Rust.
+     * 2. The string should not contain embedded null bytes (`'\0'`), as these can cause issues in certain FFI contexts.
+     * 3. The string's length should be consistent with the internal buffer, ensuring no buffer overflows or underflows.
+     */
+    fn is_safe(&self) -> bool {
+        let bytes = self.as_bytes();
 
-//         // 1. Ensure valid UTF-8 (Rust's String inherently guarantees this).
-//         if core::str::from_utf8(bytes).is_err() {
-//             return false;
-//         }
+        // 1. Ensure valid UTF-8 (Rust's String inherently guarantees this).
+        if core::str::from_utf8(bytes).is_err() {
+            return false;
+        }
 
-//         // 2. Ensure no embedded null bytes.
-//         if bytes.contains(&0) {
-//             return false;
-//         }
+        // 2. Ensure no embedded null bytes.
+        if bytes.contains(&0) {
+            return false;
+        }
 
-//         // 3. Ensure length consistency.
-//         let len = self.len();
-//         let capacity = self.capacity();
-//         if len > capacity {
-//             return false;
-//         }
+        // 3. Ensure length consistency.
+        let len = self.len();
+        let capacity = self.capacity();
+        if len > capacity {
+            return false;
+        }
 
-//         true
-//     }
-// }
+        true
+    }
+}
 
 
 impl String {
@@ -3325,7 +3325,7 @@ mod verify {
         assert_eq!(input.len(), expected_len, "Unexpected length of the result.");
 
         // Check the safety invariant of the resulting string
-        // assert!(input.is_safe(), "Resulting string does not satisfy the safety invariant.");
+        assert!(input.is_safe(), "Resulting string does not satisfy the safety invariant.");
 
         assert_eq!(input, original_input.replace(pattern, ""), "Unexpected result.");
     }
@@ -3333,7 +3333,7 @@ mod verify {
 
     #[kani::proof]
     #[kani::unwind(9)]
-    fn check_remove() {
+    fn check_remove_one() {
         // array size is chosen because it is small enough to be feasible to check exhaustively
         const ARRAY_SIZE: usize = 8;
         // Use kani::any_array to generate arbitrary byte arrays of length up to ARRAY_SIZE
@@ -3358,6 +3358,9 @@ mod verify {
         // Call the `remove` function
         let removed_char = s.remove(idx);
 
+        // Check that s is still is_safe after calling remove
+        assert!(s.is_safe(), "Resulting string does not satisfy the safety invariant.");
+
         // Verify the string length decreases correctly
         assert_eq!(s.len(), arr.len() - 1);
 
@@ -3367,4 +3370,70 @@ mod verify {
         // Verify that the removed character matches the original character at `idx`
         assert_eq!(removed_char, original_char);
     }
+
+    #[kani::proof]
+    #[kani::unwind(8)]
+    fn check_insert() {
+        const MAX_SIZE: usize = 4;
+        // const MAX_PATTERN_SIZE: usize = 1;
+
+        // Use kani::any to generate arbitrary strings of length up to MAX_SIZE
+        // let mut input: String = kani::any();
+
+        let arr: [u8; MAX_SIZE] = kani::Arbitrary::any_array();
+        for &byte in &arr {
+            kani::assume(byte.is_ascii()); // Constrain to ASCII characters
+        }
+
+        // Convert byte array to a String directly (safe since all are ASCII)
+        let mut input = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
+
+        // Generate an arbitrary pattern (single character for simplicity)
+        let pattern: char = kani::any();
+        kani::assume(pattern.is_ascii());
+
+        // Generate an arbitrary index within the bounds of the string
+        let idx: usize = kani::any_where(|&x| x <= input.len());
+
+        // Store the original length of the string
+        let original_len = input.len();
+
+        // Insert the pattern at the index `idx`
+        input.insert(idx, pattern);
+
+        // Check that the length of the string increases by 1
+        assert_eq!(input.len(), original_len + 1, "Unexpected length of the result.");
+
+        // Check that the character at the index `idx` is the pattern
+        assert_eq!(input.chars().nth(idx).expect("Index out of bounds"), pattern, "Unexpected character at the index.");
+
+        // Check the safety invariant of the resulting string
+        assert!(input.is_safe(), "Resulting string does not satisfy the safety invariant.");
+
+        // Check that the resulting string is the same as the original string with the pattern inserted
+        let mut expected = input.clone();
+        expected.insert(idx, pattern); // TODO: What's a better way to check?
+        assert_eq!(input, expected, "Unexpected result.");
+    }
+
+    // #[kani::proof]
+    // #[kani::unwind(8)]
+    // fn check_insert_str() {
+    //     const MAX_SIZE: usize = 4;
+    //     // const MAX_PATTERN_SIZE: usize = 1;
+
+    //     // Use kani::any to generate arbitrary strings of length up to MAX_SIZE
+    //     // let mut input: String = kani::any();
+
+    //     let arr: [u8; MAX_SIZE] = kani::Arbitrary::any_array();
+    //     for &byte in &arr {
+    //         kani::assume(byte.is_ascii()); // Constrain to ASCII characters
+    //     }
+
+    //     // Convert byte array to a String directly (safe since all are ASCII)
+    //     let mut input = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
+
+    //     // Generate an arbitrary pattern (single character for simplicity)
+    // }
+
 }

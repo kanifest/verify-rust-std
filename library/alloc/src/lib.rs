@@ -204,6 +204,9 @@
 // from other crates, but since this can only appear for lang items, it doesn't seem worth fixing.
 #![feature(intra_doc_pointers)]
 
+// Added for is_safe Invariant for String
+#![feature(ub_checks)]
+
 // Allow testing this library
 #[cfg(test)]
 #[macro_use]
