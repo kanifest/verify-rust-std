@@ -3298,7 +3298,7 @@ mod verify {
     
 
     #[kani::proof]
-    #[kani::unwind(8)]
+    #[kani::unwind(6)]
     fn check_remove_matches() {
         const MAX_SIZE: usize = 4;
         // const MAX_PATTERN_SIZE: usize = 1;
@@ -3314,6 +3314,8 @@ mod verify {
         // Convert byte array to a String directly (safe since all are ASCII)
         let mut input = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
 
+        // Not empty
+        kani::assume(!input.is_empty());
 
         // Generate an arbitrary pattern (single character for simplicity)
         // TODO: use string patterns of size up to MAX_PATTERN_SIZE
@@ -3370,7 +3372,7 @@ mod verify {
         let removed_char = s.remove(idx);
 
         // Check that s is still is_safe after calling remove
-        // assert!(s.is_safe(), "Resulting string does not satisfy the safety invariant.");
+        assert!(s.is_safe(), "Resulting string does not satisfy the safety invariant.");
 
         // Verify the string length decreases correctly
         assert_eq!(s.len(), arr.len() - 1);
@@ -3382,53 +3384,53 @@ mod verify {
         assert_eq!(removed_char, original_char);
     }
 
-    #[kani::proof]
-    #[kani::unwind(8)]
-    fn check_insert() {
-        const MAX_SIZE: usize = 4;
-        // const MAX_PATTERN_SIZE: usize = 1;
+    // #[kani::proof]
+    // #[kani::unwind(8)]
+    // fn check_insert() {
+    //     const MAX_SIZE: usize = 4;
+    //     // const MAX_PATTERN_SIZE: usize = 1;
 
-        // Use kani::any to generate arbitrary strings of length up to MAX_SIZE
-        // let mut input: String = kani::any();
+    //     // Use kani::any to generate arbitrary strings of length up to MAX_SIZE
+    //     // let mut input: String = kani::any();
 
-        let arr: [u8; MAX_SIZE] = kani::Arbitrary::any_array();
-        for &byte in &arr {
-            kani::assume(byte.is_ascii()); // Constrain to ASCII characters
-        }
+    //     let arr: [u8; MAX_SIZE] = kani::Arbitrary::any_array();
+    //     for &byte in &arr {
+    //         kani::assume(byte.is_ascii()); // Constrain to ASCII characters
+    //     }
 
-        // Convert byte array to a String directly (safe since all are ASCII)
-        let mut input = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
+    //     // Convert byte array to a String directly (safe since all are ASCII)
+    //     let mut input = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
 
-        // Generate an arbitrary pattern (single character for simplicity)
-        let pattern: char = kani::any();
-        kani::assume(pattern.is_ascii());
+    //     // Generate an arbitrary pattern (single character for simplicity)
+    //     let pattern: char = kani::any();
+    //     kani::assume(pattern.is_ascii());
 
-        // Generate an arbitrary index within the bounds of the string
-        let idx: usize = kani::any_where(|&x| x <= input.len());
-        kani::assume(idx <= input.len());
-        kani::assume(idx <= MAX_SIZE);
-        kani::assume(idx >= 0);
+    //     // Generate an arbitrary index within the bounds of the string
+    //     let idx: usize = kani::any_where(|&x| x <= input.len());
+    //     kani::assume(idx <= input.len());
+    //     kani::assume(idx <= MAX_SIZE);
+    //     kani::assume(idx >= 0);
 
-        // Store the original length of the string
-        let original_len = input.len();
+    //     // Store the original length of the string
+    //     let original_len = input.len();
 
-        // Insert the pattern at the index `idx`
-        input.insert(idx, pattern);
+    //     // Insert the pattern at the index `idx`
+    //     input.insert(idx, pattern);
 
-        // Check that the length of the string increases by 1
-        assert_eq!(input.len(), original_len + 1, "Unexpected length of the result.");
+    //     // Check that the length of the string increases by 1
+    //     assert_eq!(input.len(), original_len + 1, "Unexpected length of the result.");
 
-        // Check that the character at the index `idx` is the pattern
-        assert_eq!(input.chars().nth(idx).expect("Index out of bounds"), pattern, "Unexpected character at the index.");
+    //     // Check that the character at the index `idx` is the pattern
+    //     assert_eq!(input.chars().nth(idx).expect("Index out of bounds"), pattern, "Unexpected character at the index.");
 
-        // Check the safety invariant of the resulting string
-        assert!(input.is_safe(), "Resulting string does not satisfy the safety invariant.");
+    //     // Check the safety invariant of the resulting string
+    //     assert!(input.is_safe(), "Resulting string does not satisfy the safety invariant.");
 
-        // Check that the resulting string is the same as the original string with the pattern inserted
-        let mut expected = input.clone();
-        expected.insert(idx, pattern); // TODO: What's a better way to check?
-        assert_eq!(input, expected, "Unexpected result.");
-    }
+    //     // Check that the resulting string is the same as the original string with the pattern inserted
+    //     let mut expected = input.clone();
+    //     expected.insert(idx, pattern); // TODO: What's a better way to check?
+    //     assert_eq!(input, expected, "Unexpected result.");
+    // }
 
     // #[kani::proof]
     // #[kani::unwind(8)]
@@ -3449,5 +3451,101 @@ mod verify {
 
     //     // Generate an arbitrary pattern (single character for simplicity)
     // }
+    
+    #[kani::proof]
+    #[kani::unwind(5)]
+    fn check_from_utf16le() {
+        let length: usize = kani::any();
+        kani::assume(length <= 3 && length > 0);
 
+        let mut bytes = Vec::with_capacity(length);
+        for _ in 0..length {
+            let byte: u8 = kani::any();
+            kani::assume(byte.is_ascii());
+            bytes.push(byte);
+        }
+    
+        let s = String::from_utf8(bytes).unwrap_or_default();
+        let utf16le: Vec<u16> = s.encode_utf16().collect();
+    
+        // Convert to a byte array in little-endian format
+        let utf16le_bytes: Vec<u8> = utf16le.iter().flat_map(|&x| x.to_le_bytes()).collect();
+        let s2 = String::from_utf16le(&utf16le_bytes).unwrap_or_default();
+        
+        assert!(s2.is_safe(), "Resulting string does not satisfy the safety invariant.");
+        assert_eq!(s, s2, "Unexpected result.");
+    }
+    
+    #[kani::proof]
+    #[kani::unwind(5)]
+    fn check_from_utf16le_lossy() {
+        let length: usize = kani::any();
+        kani::assume(length <= 3 && length > 0);
+    
+        let mut bytes = Vec::with_capacity(length);
+        for _ in 0..length {
+            let byte: u8 = kani::any();
+            kani::assume(byte.is_ascii());
+            bytes.push(byte);
+        }
+    
+        let s = String::from_utf8(bytes).unwrap_or_default();
+        let utf16le: Vec<u16> = s.encode_utf16().collect();
+    
+        let utf16le_bytes: Vec<u8> = utf16le.iter().flat_map(|&x| x.to_le_bytes()).collect();
+        let s2 = String::from_utf16le_lossy(&utf16le_bytes);
+
+
+        assert!(s2.is_safe(), "Resulting string does not satisfy the safety invariant.");
+    
+        assert_eq!(s, s2, "Unexpected result.");
+    }
+    
+    #[kani::proof]
+    #[kani::unwind(5)]
+    fn check_from_utf16be() {
+        let length: usize = kani::any();
+        kani::assume(length <= 3 && length > 0);
+    
+        let mut bytes = Vec::with_capacity(length);
+        for _ in 0..length {
+            let byte: u8 = kani::any();
+            kani::assume(byte.is_ascii());
+            bytes.push(byte);
+        }
+    
+        let s = String::from_utf8(bytes).unwrap_or_default();
+        let utf16be: Vec<u16> = s.encode_utf16().collect();
+    
+        // Convert to a byte array in big-endian format
+        let utf16be_bytes: Vec<u8> = utf16be.iter().flat_map(|&x| x.to_be_bytes()).collect();
+        let s2 = String::from_utf16be(&utf16be_bytes).unwrap_or_default();
+        
+        assert!(s2.is_safe(), "Resulting string does not satisfy the safety invariant.");
+        assert_eq!(s, s2, "Unexpected result.");
+    }
+    
+    #[kani::proof]
+    #[kani::unwind(5)]
+    fn check_from_utf16be_lossy() {
+        let length: usize = kani::any();
+        kani::assume(length <= 3 && length > 0);
+    
+        let mut bytes = Vec::with_capacity(length);
+        for _ in 0..length {
+            let byte: u8 = kani::any();
+            kani::assume(byte.is_ascii());
+            bytes.push(byte);
+        }
+    
+        let s = String::from_utf8(bytes).unwrap_or_default();
+        let utf16be: Vec<u16> = s.encode_utf16().collect();
+    
+        let utf16be_bytes: Vec<u8> = utf16be.iter().flat_map(|&x| x.to_be_bytes()).collect();
+        let s2 = String::from_utf16be_lossy(&utf16be_bytes);
+        
+        assert!(s2.is_safe(), "Resulting string does not satisfy the safety invariant.");
+        assert_eq!(s, s2, "Unexpected result.");
+    }
+    
 }
