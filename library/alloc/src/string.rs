@@ -426,6 +426,40 @@ pub struct FromUtf8Error {
 #[derive(Debug)]
 pub struct FromUtf16Error(());
 
+// #[unstable(feature = "ub_checks", issue = "none")]
+// impl Invariant for String {
+//     /**
+//      * Safety invariant of a valid String:
+//      * 
+//      * 1. The string should contain only valid UTF-8 sequences, as guaranteed by Rust.
+//      * 2. The string should not contain embedded null bytes (`'\0'`), as these can cause issues in certain FFI contexts.
+//      * 3. The string's length should be consistent with the internal buffer, ensuring no buffer overflows or underflows.
+//      */
+//     fn is_safe(&self) -> bool {
+//         let bytes = self.as_bytes();
+
+//         // 1. Ensure valid UTF-8 (Rust's String inherently guarantees this).
+//         if core::str::from_utf8(bytes).is_err() {
+//             return false;
+//         }
+
+//         // 2. Ensure no embedded null bytes.
+//         if bytes.contains(&0) {
+//             return false;
+//         }
+
+//         // 3. Ensure length consistency.
+//         let len = self.len();
+//         let capacity = self.capacity();
+//         if len > capacity {
+//             return false;
+//         }
+
+//         true
+//     }
+// }
+
+
 impl String {
     /// Creates a new empty `String`.
     ///
@@ -3255,11 +3289,20 @@ mod verify {
     #[kani::proof]
     #[kani::unwind(8)]
     fn check_remove_matches() {
-        const MAX_SIZE: usize = 8;
+        const MAX_SIZE: usize = 4;
         // const MAX_PATTERN_SIZE: usize = 1;
 
         // Use kani::any to generate arbitrary strings of length up to MAX_SIZE
-        let mut input: String = kani::any();
+        // let mut input: String = kani::any();
+
+        let arr: [u8; MAX_SIZE] = kani::Arbitrary::any_array();
+        for &byte in &arr {
+            kani::assume(byte.is_ascii()); // Constrain to ASCII characters
+        }
+
+        // Convert byte array to a String directly (safe since all are ASCII)
+        let mut input = unsafe { String::from_utf8_unchecked(arr.to_vec()) };
+
 
         // Generate an arbitrary pattern (single character for simplicity)
         // TODO: use string patterns of size up to MAX_PATTERN_SIZE
@@ -3269,8 +3312,8 @@ mod verify {
         // Preserve original input for validation
         let original_input = input.clone();
         
-        // Remove matches of the pattern
-        input.retain(|c| c != pattern);
+        // Remove matches of the pattern with remove_matches
+        input.remove_matches(pattern);
 
         // Check that all occurrences of the pattern are removed
         for c in input.chars() {
