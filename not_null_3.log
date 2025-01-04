@@ -1,0 +1,705 @@
+# This is with ./scripts/run-kani.sh --kani-args "--harness ptr::verify::check_read_u128" > not_null_3.log
+
+Using TOML file: tool_config/kani-version.toml
+Using repository URL: https://github.com/model-checking/kani.git
+Kani binary is up to date. Skipping build.
+Kani executable path: /mydata/verify-rust-std/kani_build/scripts/kani
+Running Kani command...
+kani 0.56.0
+Running Kani verify-std command...
+Kani Rust Verifier 0.56.0 (standalone)
+Checking harness ptr::verify::check_read_u128...
+CBMC 6.4.1 (cbmc-6.4.1)
+CBMC version 6.4.1 (cbmc-6.4.1) 64-bit x86_64 linux
+Reading GOTO program from file /mydata/verify-rust-std/target/kani_verify_std/target/x86_64-unknown-linux-gnu/debug/deps/core-2e8dd81abd25a386__RNvNtNtCs2AT3ASgq2Ut_4core3ptr6verify15check_read_u128.out
+Generating GOTO Program
+Adding CPROVER library (x86_64)
+Removal of function pointers and virtual functions
+Generic Property Instrumentation
+Running with 12 object bits, 52 offset bits (user-specified)
+Starting Bounded Model Checking
+aborting path on assume(false) at file /mydata/verify-rust-std/library/core/src/panicking.rs line 418 column 17 function panicking::assert_failed_inner thread 0
+aborting path on assume(false) at file /mydata/verify-rust-std/library/core/src/panicking.rs line 373 column 5 function panicking::assert_failed::<u16, u16> thread 0
+aborting path on assume(false) at file /mydata/verify-rust-std/library/core/src/macros/mod.rs line 51 column 21 function ptr::verify::check_read_u128 thread 0
+Runtime Symex: 0.319261s
+size of program expression: 4477 steps
+slicing removed 3125 assignments
+Generated 81 VCC(s), 20 remaining after simplification
+Runtime Postprocess Equation: 0.00152027s
+Passing problem to propositional reduction
+converting SSA
+Runtime Convert SSA: 0.0179421s
+Running propositional reduction
+Post-processing
+Runtime Post-process: 1.7314e-05s
+Solving with CaDiCaL 2.0.0
+7322 variables, 9819 clauses
+SAT checker: instance is SATISFIABLE
+Runtime Solver: 0.000627315s
+Runtime decision procedure: 0.0190076s
+Running propositional reduction
+Solving with CaDiCaL 2.0.0
+7323 variables, 9820 clauses
+SAT checker: instance is UNSATISFIABLE
+Runtime Solver: 0.000147605s
+Runtime decision procedure: 0.000231798s
+
+RESULTS:
+Check 1: __CPROVER_contracts_write_set_check_assignment.assertion.1
+	 - Status: SUCCESS
+	 - Description: "ptr NULL or writable up to size"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:775 in function __CPROVER_contracts_write_set_check_assignment
+
+Check 2: __CPROVER_contracts_write_set_check_assignment.assertion.2
+	 - Status: SUCCESS
+	 - Description: "CAR size is less than __CPROVER_max_malloc_size"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:792 in function __CPROVER_contracts_write_set_check_assignment
+
+Check 3: __CPROVER_contracts_write_set_check_assignment.assertion.3
+	 - Status: SUCCESS
+	 - Description: "no offset bits overflow on CAR upper bound computation"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:798 in function __CPROVER_contracts_write_set_check_assignment
+
+Check 4: __CPROVER_contracts_write_set_check_assignment.unwind.1
+	 - Status: SUCCESS
+	 - Description: "unwinding assertion loop 0"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:807 in function __CPROVER_contracts_write_set_check_assignment
+
+Check 5: fmt::Arguments::<'_>::new_const::<1>.assigns.1
+	 - Status: SUCCESS
+	 - Description: "Check that *((unsigned char **)&temp_0) is assignable"
+	 - Location: library/core/src/fmt/mod.rs:342:34 in function fmt::Arguments::<'_>::new_const::<1>
+
+Check 6: fmt::Arguments::<'_>::new_v1::<3, 3>.assigns.1
+	 - Status: SUCCESS
+	 - Description: "Check that *((unsigned char **)&temp_0) is assignable"
+	 - Location: library/core/src/fmt/mod.rs:353:34 in function fmt::Arguments::<'_>::new_v1::<3, 3>
+
+Check 7: panicking::assert_failed_inner.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/lib.rs:0:0 in function panicking::assert_failed_inner
+
+Check 8: panicking::assert_failed_inner.assertion.1
+	 - Status: SUCCESS
+	 - Description: "This is a placeholder message; Kani doesn't support message formatted at runtime"
+	 - Location: library/core/src/panicking.rs:413:23 in function panicking::assert_failed_inner
+
+Check 9: panicking::assert_failed_inner.assertion.2
+	 - Status: SUCCESS
+	 - Description: "This is a placeholder message; Kani doesn't support message formatted at runtime"
+	 - Location: library/core/src/panicking.rs:418:17 in function panicking::assert_failed_inner
+
+Check 10: ptr::non_null::NonNull::<&dyn fmt::Debug>::cast::<()>::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<&dyn fmt::Debug>::cast::<()>::{closure#1}
+
+Check 11: ptr::non_null::NonNull::<&dyn fmt::Debug>::as_ptr::{closure#2}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<&dyn fmt::Debug>::as_ptr::{closure#2}
+
+Check 12: __CPROVER_contracts_write_set_record_deallocated.unwind.1
+	 - Status: SUCCESS
+	 - Description: "unwinding assertion loop 0"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:710 in function __CPROVER_contracts_write_set_record_deallocated
+
+Check 13: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.safety_check.1
+	 - Status: SUCCESS
+	 - Description: "`src` must be properly aligned"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 14: core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}.single_top_level_call.1
+	 - Status: SUCCESS
+	 - Description: "Only a single top-level call to function _RNCNCINvNtCs2AT3ASgq2Ut_4core3ptr13read_volatiletEs0_00B8_ when checking contract _RNCNCINvNtCs2AT3ASgq2Ut_4core3ptr13read_volatiletEs0_00B8_"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 15: core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}.no_alloc_dealloc_in_requires.1
+	 - Status: SUCCESS
+	 - Description: "Check that requires do not allocate or deallocate memory"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 16: core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}.no_alloc_dealloc_in_ensures.1
+	 - Status: SUCCESS
+	 - Description: "Check that ensures do not allocate or deallocate memory"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 17: core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}.no_recursive_call.1
+	 - Status: SUCCESS
+	 - Description: "No recursive call to function _RNCNCINvNtCs2AT3ASgq2Ut_4core3ptr13read_volatiletEs0_00B8_ when checking contract _RNCNCINvNtCs2AT3ASgq2Ut_4core3ptr13read_volatiletEs0_00B8_"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function core::ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 18: free.frees.1
+	 - Status: SUCCESS
+	 - Description: "Check that ptr is freeable"
+	 - Location: <builtin-library-free>:43 in function free
+
+Check 19: fmt::Arguments::<'_>::new_v1::<4, 4>.assigns.1
+	 - Status: SUCCESS
+	 - Description: "Check that *((unsigned char **)&temp_0) is assignable"
+	 - Location: library/core/src/fmt/mod.rs:353:34 in function fmt::Arguments::<'_>::new_v1::<4, 4>
+
+Check 20: ptr::verify::check_read_u128.assigns.1
+	 - Status: SUCCESS
+	 - Description: "Check that *((unsigned char **)&temp_1) is assignable"
+	 - Location: library/core/src/macros/mod.rs:51:85 in function ptr::verify::check_read_u128
+
+Check 21: ptr::non_null::NonNull::<&dyn fmt::Debug>::cast::<()>::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<&dyn fmt::Debug>::cast::<()>::{closure#0}
+
+Check 22: ptr::read_volatile::<u16>::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#0}
+
+Check 23: kani::mem::is_inbounds::<u16>.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: kani_build/library/kani_core/src/mem.rs:194:9 in function kani::mem::is_inbounds::<u16>
+
+Check 24: kani::mem::is_inbounds::<u16>.assertion.1
+	 - Status: SUCCESS
+	 - Description: "Kani does not support reasoning about pointer to unallocated memory"
+	 - Location: library/core/src/lib.rs:409:1 in function kani::mem::is_inbounds::<u16>
+
+Check 25: ptr::read_volatile::<u16>.safety_check.1
+	 - Status: SUCCESS
+	 - Description: "`src` must be properly aligned"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 26: ptr::non_null::NonNull::<fmt::Arguments<'_>>::as_ptr::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<fmt::Arguments<'_>>::as_ptr::{closure#1}
+
+Check 27: panic::location::Location::<'_>::caller.unsupported_construct.1
+	 - Status: SUCCESS
+	 - Description: "caller_location is not currently supported by Kani. Please post your example at https://github.com/model-checking/kani/issues/374"
+	 - Location: library/core/src/panic/location.rs:89:9 in function panic::location::Location::<'_>::caller
+
+Check 28: ptr::const_ptr::<impl *const ()>::is_aligned_to.assertion.1
+	 - Status: UNREACHABLE
+	 - Description: "attempt to subtract with overflow"
+	 - Location: library/core/src/ptr/const_ptr.rs:1582:23 in function ptr::const_ptr::<impl *const ()>::is_aligned_to
+
+Check 29: ptr::const_ptr::<impl *const ()>::is_aligned_to.assertion.2
+	 - Status: SUCCESS
+	 - Description: "This is a placeholder message; Kani doesn't support message formatted at runtime"
+	 - Location: library/core/src/ptr/const_ptr.rs:1579:13 in function ptr::const_ptr::<impl *const ()>::is_aligned_to
+
+Check 30: ptr::read_volatile::<u16>::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#1}
+
+Check 31: kani::mem::is_ptr_aligned::<u16>.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: kani_build/library/kani_core/src/mem.rs:216:9 in function kani::mem::is_ptr_aligned::<u16>
+
+Check 32: kani::mem::is_ptr_aligned::<u16>.assertion.1
+	 - Status: SUCCESS
+	 - Description: "attempt to subtract with overflow"
+	 - Location: kani_build/library/kani_core/src/mem.rs:219:38 in function kani::mem::is_ptr_aligned::<u16>
+
+Check 33: kani::mem::is_ptr_aligned::<u16>.assertion.2
+	 - Status: SUCCESS
+	 - Description: "attempt to subtract with overflow"
+	 - Location: kani_build/library/kani_core/src/mem.rs:221:45 in function kani::mem::is_ptr_aligned::<u16>
+
+Check 34: ptr::non_null::NonNull::<&str>::as_ptr::{closure#2}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<&str>::as_ptr::{closure#2}
+
+Check 35: ptr::non_null::NonNull::<&dyn fmt::Debug>::as_ptr::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<&dyn fmt::Debug>::as_ptr::{closure#0}
+
+Check 36: ptr::non_null::NonNull::<&str>::cast::<()>::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<&str>::cast::<()>::{closure#1}
+
+Check 37: ptr::non_null::NonNull::<fmt::Arguments<'_>>::cast::<()>::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<fmt::Arguments<'_>>::cast::<()>::{closure#0}
+
+Check 38: ptr::non_null::NonNull::<fmt::Arguments<'_>>::as_ptr::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<fmt::Arguments<'_>>::as_ptr::{closure#0}
+
+Check 39: panicking::panic_fmt.unsupported_construct.1
+	 - Status: SUCCESS
+	 - Description: "call to foreign "Rust" function `rust_begin_unwind` is not currently supported by Kani. Please post your example at https://github.com/model-checking/kani/issues/new/choose"
+	 - Location: library/core/src/panicking.rs:65:9 in function panicking::panic_fmt
+
+Check 40: ptr::non_null::NonNull::<&dyn fmt::Debug>::cast::<()>::{closure#2}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<&dyn fmt::Debug>::cast::<()>::{closure#2}
+
+Check 41: ptr::non_null::NonNull::<&str>::as_ptr::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<&str>::as_ptr::{closure#0}
+
+Check 42: ptr::non_null::NonNull::<&str>::as_ptr::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<&str>::as_ptr::{closure#1}
+
+Check 43: ptr::non_null::NonNull::<&dyn fmt::Debug>::as_ptr::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<&dyn fmt::Debug>::as_ptr::{closure#1}
+
+Check 44: ptr::non_null::NonNull::<&str>::cast::<()>::{closure#0}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<&str>::cast::<()>::{closure#0}
+
+Check 45: kani::mem::assert_is_initialized::<u16>.assertion.1
+	 - Status: SUCCESS
+	 - Description: "Undefined Behavior: Reading from an uninitialized pointer"
+	 - Location: library/core/src/lib.rs:409:1 in function kani::mem::assert_is_initialized::<u16>
+
+Check 46: ptr::non_null::NonNull::<&str>::cast::<()>::{closure#2}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<&str>::cast::<()>::{closure#2}
+
+Check 47: ptr::non_null::NonNull::<fmt::Arguments<'_>>::as_ptr::{closure#2}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:359:5 in function ptr::non_null::NonNull::<fmt::Arguments<'_>>::as_ptr::{closure#2}
+
+Check 48: ptr::non_null::NonNull::<fmt::Arguments<'_>>::cast::<()>::{closure#2}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<fmt::Arguments<'_>>::cast::<()>::{closure#2}
+
+Check 49: ptr::non_null::NonNull::<fmt::Arguments<'_>>::cast::<()>::{closure#1}.unreachable.1
+	 - Status: SUCCESS
+	 - Description: "unreachable code"
+	 - Location: library/core/src/ptr/non_null.rs:462:5 in function ptr::non_null::NonNull::<fmt::Arguments<'_>>::cast::<()>::{closure#1}
+
+Check 50: ptr::verify::check_read_u128.precondition_instance.1
+	 - Status: SUCCESS
+	 - Description: "free argument must be NULL or valid pointer"
+	 - Location: library/core/src/ptr/mod.rs:2454:5 in function ptr::verify::check_read_u128
+
+Check 51: ptr::verify::check_read_u128.precondition_instance.2
+	 - Status: SUCCESS
+	 - Description: "free argument must be dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:2454:5 in function ptr::verify::check_read_u128
+
+Check 52: ptr::verify::check_read_u128.precondition_instance.3
+	 - Status: SUCCESS
+	 - Description: "free argument has offset zero"
+	 - Location: library/core/src/ptr/mod.rs:2454:5 in function ptr::verify::check_read_u128
+
+Check 53: ptr::verify::check_read_u128.precondition_instance.4
+	 - Status: SUCCESS
+	 - Description: "double free"
+	 - Location: library/core/src/ptr/mod.rs:2454:5 in function ptr::verify::check_read_u128
+
+Check 54: ptr::verify::check_read_u128.precondition_instance.5
+	 - Status: SUCCESS
+	 - Description: "free called for new[] object"
+	 - Location: library/core/src/ptr/mod.rs:2454:5 in function ptr::verify::check_read_u128
+
+Check 55: ptr::verify::check_read_u128.precondition_instance.6
+	 - Status: SUCCESS
+	 - Description: "free called for stack-allocated object"
+	 - Location: library/core/src/ptr/mod.rs:2454:5 in function ptr::verify::check_read_u128
+
+Check 56: ptr::verify::check_read_u128.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/macros/mod.rs:46:22 in function ptr::verify::check_read_u128
+
+Check 57: ptr::verify::check_read_u128.pointer_dereference.2
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/macros/mod.rs:46:22 in function ptr::verify::check_read_u128
+
+Check 58: ptr::verify::check_read_u128.pointer_dereference.3
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/macros/mod.rs:46:22 in function ptr::verify::check_read_u128
+
+Check 59: ptr::verify::check_read_u128.pointer_dereference.4
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/macros/mod.rs:46:22 in function ptr::verify::check_read_u128
+
+Check 60: ptr::verify::check_read_u128.pointer_dereference.5
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/macros/mod.rs:46:22 in function ptr::verify::check_read_u128
+
+Check 61: ptr::verify::check_read_u128.pointer_dereference.6
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/macros/mod.rs:46:22 in function ptr::verify::check_read_u128
+
+Check 62: ptr::verify::check_read_u128.pointer_dereference.7
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/macros/mod.rs:46:35 in function ptr::verify::check_read_u128
+
+Check 63: ptr::verify::check_read_u128.pointer_dereference.8
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/macros/mod.rs:46:35 in function ptr::verify::check_read_u128
+
+Check 64: ptr::verify::check_read_u128.pointer_dereference.9
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/macros/mod.rs:46:35 in function ptr::verify::check_read_u128
+
+Check 65: ptr::verify::check_read_u128.pointer_dereference.10
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/macros/mod.rs:46:35 in function ptr::verify::check_read_u128
+
+Check 66: ptr::verify::check_read_u128.pointer_dereference.11
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/macros/mod.rs:46:35 in function ptr::verify::check_read_u128
+
+Check 67: ptr::verify::check_read_u128.pointer_dereference.12
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/macros/mod.rs:46:35 in function ptr::verify::check_read_u128
+
+Check 68: ptr::verify::check_read_u128.pointer_dereference.13
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/macros/mod.rs:51:85 in function ptr::verify::check_read_u128
+
+Check 69: __CPROVER_contracts_obj_set_create_indexed_by_object_id.bit_count.1
+	 - Status: SUCCESS
+	 - Description: "count leading zeros is undefined for value zero"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:251 in function __CPROVER_contracts_obj_set_create_indexed_by_object_id
+
+Check 70: __CPROVER_contracts_obj_set_create_indexed_by_object_id.bit_count.2
+	 - Status: SUCCESS
+	 - Description: "count leading zeros is undefined for value zero"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:251 in function __CPROVER_contracts_obj_set_create_indexed_by_object_id
+
+Check 71: __CPROVER_contracts_obj_set_create_indexed_by_object_id.bit_count.3
+	 - Status: SUCCESS
+	 - Description: "count leading zeros is undefined for value zero"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:251 in function __CPROVER_contracts_obj_set_create_indexed_by_object_id
+
+Check 72: __CPROVER_contracts_obj_set_create_indexed_by_object_id.bit_count.4
+	 - Status: SUCCESS
+	 - Description: "count leading zeros is undefined for value zero"
+	 - Location: <builtin-library-__CPROVER_contracts_library>:251 in function __CPROVER_contracts_obj_set_create_indexed_by_object_id
+
+Check 73: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 74: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.2
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 75: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.3
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 76: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.4
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 77: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.5
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 78: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.6
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 79: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.7
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 80: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.8
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 81: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.9
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 82: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.10
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 83: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.11
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 84: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.12
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1741:47 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 85: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.13
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 86: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.14
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 87: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.15
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 88: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.16
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 89: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.17
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 90: ptr::read_volatile::<u16>::{closure#2}.pointer_dereference.18
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1741:1 in function ptr::read_volatile::<u16>::{closure#2}
+
+Check 91: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 92: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.2
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 93: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.3
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 94: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.4
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 95: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.5
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 96: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.6
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 97: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.7
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 98: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.8
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 99: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.9
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 100: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.10
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 101: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.11
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 102: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.12
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1749:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 103: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.13
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 104: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.14
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 105: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.15
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 106: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.16
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 107: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.17
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 108: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.18
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 109: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.19
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 110: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.20
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 111: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.21
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 112: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.22
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 113: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.23
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 114: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.24
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1754:35 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 115: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.25
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 116: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.26
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 117: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.27
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 118: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.28
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 119: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.29
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 120: ptr::read_volatile::<u16>::{closure#2}::{closure#0}.pointer_dereference.30
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>::{closure#2}::{closure#0}
+
+Check 121: fmt::Arguments::<'_>::new_v1::<3, 3>.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/fmt/mod.rs:353:34 in function fmt::Arguments::<'_>::new_v1::<3, 3>
+
+Check 122: panicking::assert_failed_inner.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/panicking.rs:412:11 in function panicking::assert_failed_inner
+
+Check 123: fmt::Arguments::<'_>::new_const::<1>.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/fmt/mod.rs:342:34 in function fmt::Arguments::<'_>::new_const::<1>
+
+Check 124: ptr::read_volatile::<u16>.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer NULL"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 125: ptr::read_volatile::<u16>.pointer_dereference.2
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer invalid"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 126: ptr::read_volatile::<u16>.pointer_dereference.3
+	 - Status: SUCCESS
+	 - Description: "dereference failure: deallocated dynamic object"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 127: ptr::read_volatile::<u16>.pointer_dereference.4
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 128: ptr::read_volatile::<u16>.pointer_dereference.5
+	 - Status: SUCCESS
+	 - Description: "dereference failure: pointer outside object bounds"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 129: ptr::read_volatile::<u16>.pointer_dereference.6
+	 - Status: SUCCESS
+	 - Description: "dereference failure: invalid integer address"
+	 - Location: library/core/src/ptr/mod.rs:1754:9 in function ptr::read_volatile::<u16>
+
+Check 130: fmt::Arguments::<'_>::new_v1::<4, 4>.pointer_dereference.1
+	 - Status: SUCCESS
+	 - Description: "dereference failure: dead object"
+	 - Location: library/core/src/fmt/mod.rs:353:34 in function fmt::Arguments::<'_>::new_v1::<4, 4>
+
+
+SUMMARY:
+ ** 0 of 130 failed (1 unreachable)
+
+VERIFICATION:- SUCCESSFUL
+Verification Time: 28.441355s
+
+Complete - 1 successfully verified harnesses, 0 failures, 1 total.
